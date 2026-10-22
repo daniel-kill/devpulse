@@ -1,7 +1,6 @@
 import shutil
 import subprocess
 import time
-from typing import Any
 
 import psutil
 import typer
@@ -16,8 +15,8 @@ from devpulse.config import load_config
 
 console = Console()
 
-def get_docker_status(custom_services: list[str] | None = None) -> list[tuple[str, str]]:
-    """Probe local Docker daemon for running containers and check custom services."""
+def get_docker_status() -> list[tuple[str, str]]:
+    """Probe local Docker daemon for running containers."""
     results: list[tuple[str, str]] = []
 
     if not shutil.which("docker"):
@@ -88,8 +87,8 @@ def generate_dashboard() -> Layout:
             d = psutil.disk_usage(path)
             label = f"Disk ({path})" if len(monitored_paths) > 1 else "Disk Usage"
             sys_table.add_row(label, f"{d.percent}% ({d.used // (1024**3)}GB / {d.total // (1024**3)}GB)")
-        except Exception:
-            pass
+        except (OSError, ValueError):
+            continue
 
     layout["system"].update(Panel(sys_table, border_style="magenta"))
 

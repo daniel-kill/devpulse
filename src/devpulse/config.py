@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from typing import Any
 
@@ -7,9 +6,9 @@ try:
     import tomllib
 except ImportError:
     try:
-        import tomli as tomllib  # type: ignore
+        import tomli as tomllib  # type: ignore[no-redef]
     except ImportError:
-        tomllib = None  # type: ignore
+        tomllib = None  # type: ignore[assignment]
 
 DEFAULT_CONFIG_PATH = Path.home() / ".config" / "devpulse" / "config.toml"
 
@@ -20,6 +19,6 @@ def load_config(config_path: Path | None = None) -> dict[str, Any]:
         try:
             with open(target, "rb") as f:
                 return tomllib.load(f)
-        except Exception:
+        except (OSError, tomllib.TOMLDecodeError):
             return {}
     return {}
