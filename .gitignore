@@ -46,3 +46,8 @@ venv.bak/
 *~
 .DS_Store
 Thumbs.db
+
+# Local configuration and secrets
+.private/
+.logs/
+.env
