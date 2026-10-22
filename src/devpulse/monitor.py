@@ -60,8 +60,12 @@ def generate_dashboard() -> Layout:
 
     # Header
     header_panel = Panel(
-        Text("⚡ DEVPULSE // Infrastructure & Dev Metrics TUI", justify="center", style="bold cyan"),
-        style="blue"
+        Text(
+            "⚡ DEVPULSE // Infrastructure & Dev Metrics TUI",
+            justify="center",
+            style="bold cyan",
+        ),
+        style="blue",
     )
     layout["header"].update(header_panel)
 
@@ -80,13 +84,17 @@ def generate_dashboard() -> Layout:
     mem = psutil.virtual_memory()
 
     sys_table.add_row("CPU Load", f"{cpu_pct}%")
-    sys_table.add_row("Memory Used", f"{mem.percent}% ({mem.used // (1024**2)}MB / {mem.total // (1024**2)}MB)")
+    mem_used_mb = mem.used // (1024**2)
+    mem_total_mb = mem.total // (1024**2)
+    sys_table.add_row("Memory Used", f"{mem.percent}% ({mem_used_mb}MB / {mem_total_mb}MB)")
 
     for path in monitored_paths:
         try:
             d = psutil.disk_usage(path)
             label = f"Disk ({path})" if len(monitored_paths) > 1 else "Disk Usage"
-            sys_table.add_row(label, f"{d.percent}% ({d.used // (1024**3)}GB / {d.total // (1024**3)}GB)")
+            used_gb = d.used // (1024**3)
+            total_gb = d.total // (1024**3)
+            sys_table.add_row(label, f"{d.percent}% ({used_gb}GB / {total_gb}GB)")
         except (OSError, ValueError):
             continue
 
@@ -103,13 +111,22 @@ def generate_dashboard() -> Layout:
     layout["services"].update(Panel(svc_table, border_style="cyan"))
 
     # Footer
-    footer_text = Text("Press Ctrl+C to exit | Built for devpulse toolchain", justify="center", style="dim")
+    footer_text = Text(
+        "Press Ctrl+C to exit | Built for devpulse toolchain",
+        justify="center",
+        style="dim",
+    )
     layout["footer"].update(Panel(footer_text))
 
     return layout
 
 def monitor_system(
-    live: bool = typer.Option(False, "--live", "-l", help="Run interactive live-refreshing TUI dashboard.")
+    live: bool = typer.Option(
+        False,
+        "--live",
+        "-l",
+        help="Run interactive live-refreshing TUI dashboard.",
+    )
 ):
     """Monitor local system resources, disk paths, and Docker container health."""
     if live:

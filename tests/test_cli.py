@@ -77,6 +77,9 @@ def test_vault_inspect(tmp_path):
 def test_vault_sync_dry_run(tmp_path):
     env_file = tmp_path / ".env"
     env_file.write_text("PORT=8080\n")
-    result = runner.invoke(app, ["vault", "sync", "user@remote:/app/.env", "--source", str(env_file), "--dry-run"])
+    result = runner.invoke(
+        app,
+        ["vault", "sync", "user@remote:/app/.env", "--source", str(env_file), "--dry-run"],
+    )
     assert result.exit_code == 0
     assert "[DRY RUN]" in result.stdout

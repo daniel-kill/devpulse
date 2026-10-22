@@ -20,7 +20,9 @@ SKIP_DIRS = {
 def audit_repositories(
     path: str = typer.Argument(".", help="Root directory to scan for Git repositories."),
     gpg_key: str | None = typer.Option(
-        None, "--gpg-key", help="Expected GPG fingerprint or key ID to verify against commit signatures."
+        None,
+        "--gpg-key",
+        help="Expected GPG fingerprint or key ID to verify against commit signatures.",
     ),
     format: str = typer.Option(
         "table", "--format", "-f", help="Output format: 'table' or 'json'."

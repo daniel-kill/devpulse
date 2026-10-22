@@ -7,8 +7,11 @@ from devpulse.vault import vault_app
 
 app = typer.Typer(
     name="devpulse",
-    help="⚡ DevPulse: Workspace security & Git auditing, system resource telemetry, and developer health CLI.",
-    add_completion=False
+    help=(
+        "⚡ DevPulse: Workspace security & Git auditing, system resource telemetry, "
+        "and developer health CLI."
+    ),
+    add_completion=False,
 )
 
 app.command("audit")(audit_repositories)
@@ -23,7 +26,12 @@ def version_callback(value: bool):
 @app.callback()
 def main(
     version: bool = typer.Option(
-        None, "--version", "-v", callback=version_callback, is_eager=True, help="Show DevPulse version and exit."
+        None,
+        "--version",
+        "-v",
+        callback=version_callback,
+        is_eager=True,
+        help="Show DevPulse version and exit.",
     )
 ):
     pass

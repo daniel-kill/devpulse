@@ -3,12 +3,12 @@
 Supports encrypting, exporting, and syncing .env files with remote hosts or cloud targets.
 """
 
-from pathlib import Path
 import subprocess
+from pathlib import Path
 
+import typer
 from rich.console import Console
 from rich.table import Table
-import typer
 
 console = Console()
 vault_app = typer.Typer(
@@ -78,7 +78,10 @@ def sync_env(
         raise typer.Exit(code=1)
 
     if dry_run:
-        console.print(f"[yellow][DRY RUN][/yellow] Would sync [bold cyan]{source}[/] to [bold green]{target_host}[/]")
+        console.print(
+            f"[yellow][DRY RUN][/yellow] Would sync [bold cyan]{source}[/] to "
+            f"[bold green]{target_host}[/]"
+        )
         return
 
     cmd = ["scp", str(source), target_host]
