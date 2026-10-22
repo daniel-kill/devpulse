@@ -16,11 +16,17 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            target_name: devpulse-linux-amd64
+            artifact_name: devpulse-linux-amd64
+            binary_src: dist/devpulse
+            archive_name: devpulse-linux-amd64.tar.gz
           - os: macos-latest
-            target_name: devpulse-macos-amd64
+            artifact_name: devpulse-macos-amd64
+            binary_src: dist/devpulse
+            archive_name: devpulse-macos-amd64.tar.gz
           - os: windows-latest
-            target_name: devpulse-windows-amd64.zip
+            artifact_name: devpulse-windows-amd64.exe
+            binary_src: dist/devpulse.exe
+            archive_name: devpulse-windows-amd64.zip
 
     steps:
       - name: Checkout Repository
@@ -34,26 +40,29 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pyinstaller -r requirements.txt
+          pip install pyinstaller .
 
-      - name: Build Binary with PyInstaller
+      - name: Build Binary with PyInstaller (Linux/macOS)
+        if: runner.os != 'Windows'
         run: |
-          pyinstaller --noconfirm --onedir --console --name devpulse devpulse.py
-        shell: bash
+          pyinstaller --noconfirm --onefile --console --name devpulse --paths src src/devpulse/__main__.py
+
+      - name: Build Binary with PyInstaller (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          pyinstaller --noconfirm --onefile --console --name devpulse --paths src src/devpulse/__main__.py
+        shell: pwsh
 
       - name: Archive Binary (Linux/macOS)
-        run: |
-          cd dist/devpulse
-          tar -czf ../../${{ matrix.target_name }}.tar.gz *
-        shell: bash
         if: runner.os != 'Windows'
+        run: |
+          tar -czf ${{ matrix.archive_name }} -C dist devpulse
 
       - name: Archive Binary (Windows)
-        run: |
-          cd dist/devpulse
-          Compress-Archive -Path * -DestinationPath ../../${{ matrix.target_name }}
-        shell: pwsh
         if: runner.os == 'Windows'
+        run: |
+          Compress-Archive -Path dist/devpulse.exe -DestinationPath ${{ matrix.archive_name }}
+        shell: pwsh
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v1

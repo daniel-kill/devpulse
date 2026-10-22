@@ -57,12 +57,10 @@ def generate_dashboard() -> Layout:
     layout["header"].update(header_panel)
 
     # Body split into System Metrics & Services
-    body_layout = Layout()
-    body_layout.split_row(
+    layout["body"].split_row(
         Layout(name="system"),
         Layout(name="services")
     )
-    layout["body"].update(body_layout)
 
     # System Table
     sys_table = Table(title="System Resource Utilization", expand=True)
