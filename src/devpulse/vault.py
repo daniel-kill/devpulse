@@ -5,9 +5,10 @@ Supports encrypting, exporting, and syncing .env files with remote hosts or clou
 
 from pathlib import Path
 import subprocess
-import typer
+
 from rich.console import Console
 from rich.table import Table
+import typer
 
 console = Console()
 vault_app = typer.Typer(
