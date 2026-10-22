@@ -1,0 +1,12 @@
+# DevPulse Configuration (~/.config/devpulse/config.toml)
+
+[audit]
+# Default GPG Key Fingerprint to verify against commit signatures
+default_gpg_key = "E453F9AEC380D33E4BA7FAC69B542AA270F867E5"
+
+[monitor]
+# Additional filesystem mount paths to monitor
+monitored_paths = ["/"]
+
+# Custom services/containers to probe
+services = ["curio-byte", "docker"]
