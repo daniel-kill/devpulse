@@ -1,7 +1,7 @@
-import pytest
 from typer.testing import CliRunner
-from devpulse.cli import app
+
 from devpulse import __version__
+from devpulse.cli import app
 
 runner = CliRunner()
 

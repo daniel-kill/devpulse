@@ -1,4 +1,5 @@
 import typer
+
 from devpulse import __version__
 from devpulse.audit import audit_repositories
 from devpulse.monitor import monitor_system

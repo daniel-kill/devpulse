@@ -1,6 +1,7 @@
 import shutil
 import subprocess
 import time
+
 import psutil
 import typer
 from rich.console import Console
@@ -21,6 +22,7 @@ def get_docker_status() -> list[tuple[str, str]]:
             ["docker", "ps", "--format", "{{.Names}} ({{.Image}})|{{.Status}}"],
             capture_output=True,
             text=True,
+            check=False,
             timeout=2
         )
         if proc.returncode != 0:
@@ -37,7 +39,7 @@ def get_docker_status() -> list[tuple[str, str]]:
             status = parts[1] if len(parts) > 1 else "Running"
             results.append((name, f"[green]● {status}[/green]"))
         return results
-    except Exception:
+    except (subprocess.SubprocessError, OSError):
         return [("Docker Daemon", "[dim]Not probed[/dim]")]
 
 def generate_dashboard() -> Layout:

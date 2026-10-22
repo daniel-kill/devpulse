@@ -1,10 +1,10 @@
 import os
 from pathlib import Path
-from typing import Optional
+
+import git
 import typer
 from rich.console import Console
 from rich.table import Table
-import git
 
 console = Console()
 
@@ -15,7 +15,7 @@ SKIP_DIRS = {
 
 def audit_repositories(
     path: str = typer.Argument(".", help="Root directory to scan for Git repositories."),
-    gpg_key: Optional[str] = typer.Option(
+    gpg_key: str | None = typer.Option(
         None, "--gpg-key", help="Expected GPG fingerprint or key ID to verify against commit signatures."
     ),
 ):
@@ -37,7 +37,7 @@ def audit_repositories(
 
     repo_count = 0
 
-    for root, dirs, files in os.walk(target_path):
+    for root, dirs, _files in os.walk(target_path):
         # Prune known heavy non-repo directories for fast traversal
         dirs[:] = [d for d in dirs if d not in SKIP_DIRS or d == ".git"]
 
@@ -74,7 +74,7 @@ def audit_repositories(
                     sig_str,
                     f"{commit_msg}"
                 )
-            except Exception as e:
+            except (git.exc.GitError, OSError, ValueError) as e:
                 table.add_row(repo_path.name, "[red]Error[/red]", str(e)[:30], "-", "-")
 
             # Avoid traversing deeper into this repo's internals
